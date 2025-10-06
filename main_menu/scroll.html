@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Swipe App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Главный контейнер для свайпов */
+        .swipe-main {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Секции как страницы для свайпов */
+        .page {
+            min-width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* СТРАНИЦА 1 - STRIPE С ДИНАМИЧЕСКИМ МЕНЮ */
+        .page-1 {
+            background: transparent;
+        }
+
+        /* Фон для первой страницы */
+        .stripe-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .gradient-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65%;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(104, 89, 239, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(104, 89, 239, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 70%, rgba(104, 89, 239, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, 
+                    #667eea 0%, 
+                    #764ba2 25%, 
+                    #f093fb 50%, 
+                    #f5576c 75%, 
+                    #4f60fe 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 0 95%);
+        }
+
+        .white-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45%;
+            background: white;
+            clip-path: polygon(0 35%, 100% 15%, 100% 100%, 0 100%);
+        }
+
+        /* Контент первой страницы */
+        .stripe-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stripe-logo {
+            font-family: Impact, fantasy;
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .stripe-subtitle {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        /* СТРАНИЦЫ 2-5 - ЦВЕТНЫЕ СВАЙП-СТРАНИЦЫ */
+        .page-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .page-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .page-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .page-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+        .page-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .page-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-content p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* HEADER - ОБЩИЙ ДЛЯ ВСЕХ СТРАНИЦ */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            background: transparent;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header p {
+            font-family: Impact, fantasy;
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            margin: 0;
+        }
+
+        .burger {
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .burger span {
+            display: none;
+            background-color: white;
+            width: 25px;
+            height: 3px;
+            margin: 3px 0;
+            transition: 0.4s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .menu-list {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+
+        .title:hover::after {
+            width: 100%;
+        }
+
+        /* ИНДИКАТОРЫ СВАЙПОВ */
+        .indicators {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .indicator.active {
+            background: white;
+            transform: scale(1.3);
+            border-color: white;
+        }
+
+        .swipe-hint {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: white;
+            opacity: 0.7;
+            animation: pulse 3s infinite;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        /* АНИМАЦИИ */
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+                filter: hue-rotate(0deg);
+            }
+            50% {
+                background-position: 100% 50%;
+                filter: hue-rotate(90deg);
+            }
+            100% {
+                background-position: 0% 50%;
+                filter: hue-rotate(0deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* МОБИЛЬНАЯ ВЕРСИЯ */
+        @media (max-width: 768px) {
+            .stripe-logo {
+                font-size: 3rem;
+            }
+
+            .stripe-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .page-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .page-content p {
+                font-size: 1.1rem;
+            }
+
+            .burger span {
+                display: block;
+            }
+
+            .menu-list {
+                flex-direction: column;
+                gap: 20px;
+                position: absolute;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                width: 100vw;
+                background: rgba(255, 69, 0, 0.95);
+                justify-content: center;
+                align-items: center;
+                transition: left 0.8s ease;
+                z-index: 999;
+            }
+
+            .menu-list.active {
+                left: 0;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .swipe-hint {
+                font-size: 0.8rem;
+                bottom: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header style="position: fixed;">
+        <div class="container">
+            <p>stripe</p>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="main-menu">
+                <ul class="menu-list" id="menuList">
+                    <li><a class="title" href="#" data-page="0">Home</a></li>
+                    <li><a class="title" href="#" data-page="1">Features</a></li>
+                    <li><a class="title" href="#" data-page="2">Services</a></li>
+                    <li><a class="title" href="#" data-page="3">About</a></li>
+                    <li><a class="title" href="#" data-page="4">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ С СВАЙПАМИ -->
+    <div class="swipe-main" id="swipeMain">
+        <!-- СТРАНИЦА 1 - STRIPE -->
+        <div class="page page-1">
+            <div class="stripe-background">
+                <div class="gradient-section"></div>
+                <div class="white-section"></div>
+            </div>
+            <div class="stripe-content">
+                <h1 class="stripe-logo">stripe</h1>
+                <p class="stripe-subtitle">Financial infrastructure for the internet</p>
+                <div class="swipe-hint">← Swipe to explore →</div>
+            </div>
+        </div>
+
+        <!-- СТРАНИЦЫ 2-5 -->
+        <div class="page page-2">
+            <div class="page-content">
+                <h1>Features</h1>
+                <p>Innovative solutions for modern businesses</p>
+            </div>
+        </div>
+
+        <div class="page page-3">
+            <div class="page-content">
+                <h1>Services</h1>
+                <p>Comprehensive financial services</p>
+            </div>
+        </div>
+
+        <div class="page page-4">
+            <div class="page-content">
+                <h1>About</h1>
+                <p>Learn more about our mission</p>
+            </div>
+        </div>
+
+        <div class="page page-5">
+            <div class="page-content">
+                <h1>Contact</h1>
+                <p>Get in touch with our team</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ИНДИКАТОРЫ -->
+    <div class="indicators" id="indicators">
+        <div class="indicator active"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+    </div>
+
+    <script>
+        class SwipeApp {
+            constructor() {
+                this.main = document.getElementById('swipeMain');
+                this.indicators = document.getElementById('indicators');
+                this.pages = document.querySelectorAll('.page');
+                this.menuLinks = document.querySelectorAll('.title[data-page]');
+                this.burger = document.getElementById('burger');
+                this.menuList = document.getElementById('menuList');
+                this.currentPage = 0;
+                this.startX = 0;
+                this.currentX = 0;
+                this.isSwiping = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindSwipeEvents();
+                this.bindMenuEvents();
+                this.updateIndicators();
+            }
+            
+            bindSwipeEvents() {
+                // Touch events для мобильных
+                this.main.addEventListener('touchstart', this.handleStart.bind(this));
+                this.main.addEventListener('touchmove', this.handleMove.bind(this));
+                this.main.addEventListener('touchend', this.handleEnd.bind(this));
+                
+                // Mouse events для десктопа
+                this.main.addEventListener('mousedown', this.handleStart.bind(this));
+                this.main.addEventListener('mousemove', this.handleMove.bind(this));
+                this.main.addEventListener('mouseup', this.handleEnd.bind(this));
+                this.main.addEventListener('mouseleave', this.handleEnd.bind(this));
+            }
+            
+            bindMenuEvents() {
+                // Бургер меню
+                this.burger.addEventListener('click', () => {
+                    this.menuList.classList.toggle('active');
+                    document.body.classList.toggle('lock');
+                });
+                
+                // Клики по пунктам меню
+                this.menuLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const pageIndex = parseInt(link.getAttribute('data-page'));
+                        this.goToPage(pageIndex);
+                        this.menuList.classList.remove('active');
+                        document.body.classList.remove('lock');
+                    });
+                });
+            }
+            
+            handleStart(e) {
+                this.isSwiping = true;
+                this.startX = this.getX(e);
+                this.main.style.transition = 'none';
+            }
+            
+            handleMove(e) {
+                if (!this.isSwiping) return;
+                
+                this.currentX = this.getX(e) - this.startX;
+                const maxSwipe = 100;
+                const limitedX = Math.max(Math.min(this.currentX, maxSwipe), -maxSwipe);
+                
+                this.main.style.transform = `translateX(calc(-${this.currentPage * 100}% + ${limitedX}px))`;
+            }
+            
+            handleEnd() {
+                if (!this.isSwiping) return;
+                
+                this.isSwiping = false;
+                this.main.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                
+                const swipeThreshold = 50;
+                const swipeDistance = this.currentX;
+                
+                if (Math.abs(swipeDistance) > swipeThreshold) {
+                    if (swipeDistance < 0 && this.currentPage < this.pages.length - 1) {
+                        this.currentPage++;
+                    } else if (swipeDistance > 0 && this.currentPage > 0) {
+                        this.currentPage--;
+                    }
+                }
+                
+                this.goToPage(this.currentPage);
+            }
+            
+            getX(e) {
+                return e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            }
+            
+            goToPage(pageIndex) {
+                this.currentPage = pageIndex;
+                this.main.style.transform = `translateX(-${pageIndex * 100}%)`;
+                this.updateIndicators();
+            }
+            
+            updateIndicators() {
+                const dots = this.indicators.querySelectorAll('.indicator');
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentPage);
+                });
+            }
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            new SwipeApp();
+        });
+        
+        // Блокировка скролла при открытом меню
+        document.addEventListener('DOMContentLoaded', function() {
+            const burger = document.getElementById('burger');
+            const menuList = document.getElementById('menuList');
+            
+            burger.addEventListener('click', function() {
+                document.body.classList.toggle('lock');
+            });
+            
+            // Закрытие меню при клике на ссылку
+            const menuLinks = document.querySelectorAll('.title');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    menuList.classList.remove('active');
+                    document.body.classList.remove('lock');
+                });
+            });
+        });
+    </script>
+        <!-- <script src="main.js"></script> Надо добавить-->
+</body>
+</html>

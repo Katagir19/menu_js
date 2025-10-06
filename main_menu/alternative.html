@@ -43,7 +43,7 @@
                     #764ba2 25%, 
                     #f093fb 50%, 
                     #f5576c 75%, 
-                    #4f60fe 100%);
+                    #4facfe 100%);
             background-size: 400% 400%;
             animation: gradientFlow 15s ease infinite;
             clip-path: polygon(0 0, 100% 0, 100% 80%, 0 95%);
@@ -82,7 +82,155 @@
             }
         }
 
+        /* Плавающие элементы */
+        .floating-elements::before,
+        .floating-elements::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+            z-index: 1;
+        }
 
+        .floating-elements::before {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(104, 89, 239, 0.2) 0%, transparent 70%);
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .floating-elements::after {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            top: 5%;
+            right: 8%;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            33% {
+                transform: translate(40px, -30px) scale(1.1);
+                opacity: 0.4;
+            }
+            66% {
+                transform: translate(-20px, 25px) scale(0.9);
+                opacity: 0.2;
+            }
+        }
+
+        /* Контент */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            background-color: black;
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGradient 8s ease infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes textGradient {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(255, 255, 255, 0.6);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Кнопка с анимацией */
+        .cta-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            margin-top: 30px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
     </style>
 </head>
 <body>
@@ -91,6 +239,30 @@
         <div class="white-section"></div>
     </div>
 
-    
+    <div class="container">
+        <div class="hero">
+            <h1>Динамический градиент</h1>
+            <p>Диагональный фон с плавно переливающимися цветами в стиле Stripe</p>
+            <button class="cta-button">Начать探索</button>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Анимированный дизайн</h3>
+                <p>Плавные переходы и динамические эффекты</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Быстрая анимация</h3>
+                <p>Оптимизированные CSS анимации</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌈</div>
+                <h3>Цветовые переходы</h3>
+                <p>Непрерывное переливание градиентов</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
