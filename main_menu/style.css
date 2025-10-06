@@ -11,8 +11,21 @@ header{
     padding: 30px;
     display: flex;
     align-items: center;
-    background-color: black;
+    background-color: rgb(255, 255, 255, 0);
+    /* box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.05),
+        0 4px 8px rgba(0, 0, 0, 0.05),
+        0 8px 16px rgba(0, 0, 0, 0.05),
+        0 16px 32px rgba(149, 117, 205, 0.1);
+    border-bottom: 1px solid rgba(245, 240, 255, 0.8); */
     padding: 0;
+    position: relative;
+    z-index: 1000;
+    backdrop-filter: blur(10px); /* Эффект размытия фона под хэдером */
+    -webkit-backdrop-filter: blur(10px); /* Для Safari */
+}
+.parent-container{
+    height: 100vh;
 }
 section{
     height: 100vh;
@@ -29,17 +42,26 @@ a{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(47, 71, 63);
+    margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, 
+                #fff5f5 0%, 
+                #f8f4ff 25%, 
+                #f0e8ff 50%, 
+                #e8ddff 75%, 
+                #e0d2ff 100%);
+            font-family: Arial, sans-serif;
     width: 100%;
     height: 100%;
-    color: white;
+    color: rgb(0, 0, 0);
     font-size: 3rem;
 }
 .sec-2{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(127, 180, 163);
+    background-color: rgb(4, 0, 255);
     width: 100%;
     height: 100%;
     color: white;
@@ -65,12 +87,13 @@ a{
 }
 .burger span{
     display: none;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(194, 194, 194);
     width: 30px;
     height: 3px;
     margin: 5px 0;
     transition: 0.4s;
 }
+
 .main-menu{
     height: 100%;
     width: auto;
@@ -176,7 +199,7 @@ a{
     }
     .active{
         transition: all 1s ease;
-        left: 0;
+        left: -15%;
     }
     .lock{
         overflow: hidden;
