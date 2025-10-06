@@ -1,3 +1,6 @@
+html {
+    scroll-behavior: smooth;
+}
 *{
     margin: 0;
     padding: 0;
@@ -115,6 +118,28 @@ a{
     width: 100%; /* Линия появляется на всю ширину */
 }
 
+/* Стили для секции с картой */
+.map-section {
+    position: relative;
+}
+
+.map-container {
+    width: 80% !important;
+    height: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Стили для iframe карты */
+.map-container iframe {
+    width: 80% !important;
+    height: 80% !important;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
 
 @media (max-width: 760px) {
     .burger span{
@@ -144,29 +169,22 @@ a{
         height: 100vh;
         width: 100vw;
         background-color: orangered;
-        transition: left 0.5s ease;
+        transition: left 1.25s ease;
         display: flex;
         justify-content: center;
         align-items: center;
     }
     .active{
-        transition: all .2s ease;
+        transition: all 1s ease;
         left: 0;
     }
     .lock{
         overflow: hidden;
     }
-    /*.burger.active span:nth-child(1) {
-        transform: rotate(-45deg);
-        top: calc(50% - 1px);
-    }
     
-    .burger.active span:nth-child(2) {
-        transform: rotate(45deg);
-        top: calc(50% - 1px);
+    /* Адаптивные стили для карты на мобильных */
+    .map-container {
+        width: 95% !important;
+        padding: 10px;
     }
-    
-    .burger.active span:nth-child(3) {
-        opacity: 0;
-    }*/
-} 
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Быстрый старт. Размещение интерактивной карты на странице</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=d040fc48-6a97-4e5e-93fe-f083d4045f3f" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <div id="map" style="width: 100%; height: 100vh"></div>
+  </body>
+  <script>
+    ymaps.ready(function () {
+        var myMap = new ymaps.Map('map', {
+            center: [55.751574, 37.573856], // Координаты центра карты (Москва)
+            zoom: 9 // Начальный масштаб карты
+        });
+
+        // Создание метки с кастомной иконкой
+        var myPlacemark = new ymaps.Placemark([55.733842, 37.588144], { // Обратите внимание на порядок координат!
+            hintContent: 'Моя метка',
+            balloonContent: "I'm marker!"
+        }, {
+            // Опции метки
+            preset: 'islands#blueIcon', // Тип метки
+            draggable: true // Можно перемещать
+        });
+
+        // Добавление метки на карту
+        myMap.geoObjects.add(myPlacemark);
+
+        // Обработчик перемещения метки
+        myPlacemark.events.add('dragend', function (e) {
+            var coords = myPlacemark.geometry.getCoordinates();
+            console.log('Метка перемещена на координаты: ' + coords);
+        });
+    });
+  </script>
+</html>
